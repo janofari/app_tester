@@ -1,14 +1,14 @@
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+import iconUrl from 'leaflet/dist/images/marker-icon.png?url';
+import iconShadowUrl from 'leaflet/dist/images/marker-shadow.png?url';
 import styles from './Map.module.css'; // nuevo módulo CSS
 
 // Icono por defecto para Leaflet
 const DefaultIcon = L.icon({
-  iconUrl: icon.src || icon,
-  shadowUrl: iconShadow.src || iconShadow,
+  iconUrl: iconUrl,
+  shadowUrl: iconShadowUrl,
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
