@@ -1,95 +1,79 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from "react";
+import dynamic from "next/dynamic";
+import { Eye, EyeOff } from "lucide-react";
+
+import Navbar from "@/components/Navbar";
+import {sampleProjects } from "@/components/namesandpatterns";
 import styles from "./page.module.css";
 
-export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+const Map = dynamic(() => import("@/components/Map"), { ssr: false });
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+
+export default function HomePage() {
+  const [visibleMarkers, setVisibleMarkers] = useState<number[]>([]);
+
+  const toggleMarker = (id: number) => {
+    setVisibleMarkers((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  return (
+    <div className={styles.container}>
+      
+      {/* Insercion de la navbar */}
+      <Navbar />
+
+      <div className={styles.content}>
+
+        {/* Tabla a la izquierda */}
+
+        <div className={styles.tableSection}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Ubicación</th>
+                <th>Estado</th>
+                <th>Visibilidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sampleProjects.map((project) => (
+                <tr key={project.id}>
+                  <td>{project.name}</td>
+                  <td>{project.location}</td>
+                  <td>{project.status}</td>
+                  <td>
+                    <button
+                      className={styles.eyeButton}
+                      onClick={() => toggleMarker(project.id)}
+                      title={visibleMarkers.includes(project.id) ? "Ocultar del mapa" : "Mostrar en el mapa"}
+                    >
+                      {visibleMarkers.includes(project.id) ? (
+                        <Eye size={18} color="#2563eb" />
+                      ) : (
+                        <EyeOff size={18} color="#666" />
+                      )}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+
+
+        {/* Mapa a la derecha */}
+
+        <div className={styles.mapSection}>
+          <Map
+            projects={sampleProjects.filter((p) => visibleMarkers.includes(p.id))}
           />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </div>
+      </div>
     </div>
   );
 }
